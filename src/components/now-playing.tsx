@@ -2,9 +2,12 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { fetchCurrentPlayingMusic } from "@/lib/spotify-stalker-api";
+import { CurrentPlayingMusicResponse } from "@/types/current-playing-music";
 import { useQuery } from "@tanstack/react-query";
 import { Music } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { ProgressBar } from "./progress-bar";
 
 export function NowPlaying() {
   return (
@@ -80,7 +83,52 @@ function NowPlayingContent() {
             {data.currentItemPlaying.album.name}
           </p>
         </div>
+
+        <NowPlayingProgressBar track={data} />
       </div>
     </>
+  );
+}
+
+interface NowPlayingProgressBarProps {
+  track: CurrentPlayingMusicResponse;
+}
+
+function NowPlayingProgressBar({ track }: NowPlayingProgressBarProps) {
+  const [currentTime, setCurrentTime] = useState(
+    track.currentItemPlaying.progressMs / 1000
+  );
+  const duration = track.currentItemPlaying.durationMs / 1000;
+
+  const { isPlaying } = track;
+
+  useEffect(() => {
+    setCurrentTime(track.currentItemPlaying.progressMs / 1000);
+
+    if (!isPlaying) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCurrentTime((prev) => {
+        if (prev >= duration) {
+          clearInterval(interval);
+          return duration;
+        }
+        return prev + 1;
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [track, isPlaying, duration]);
+
+  return (
+    <ProgressBar
+      currentTime={currentTime}
+      duration={duration}
+      className="mt-4 px-2"
+    />
   );
 }

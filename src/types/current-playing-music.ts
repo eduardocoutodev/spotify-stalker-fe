@@ -18,6 +18,7 @@ const currentItemPlayingSchema = z.object({
   album: albumSchema,
   artists: z.array(artistSchema),
   durationMs: z.number().int().positive(),
+  progressMs: z.number().int().positive(),
   explicit: z.boolean(),
   spotifyHref: z.string().url(),
   name: z.string(),
