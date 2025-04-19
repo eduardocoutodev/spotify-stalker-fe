@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { cn } from "@/lib/utils";
 import React, { useState } from "react";
@@ -123,13 +124,11 @@ export function ProgressBar({
     }
   };
 
-  // Calculate the effective percentage to display
   const displayPercentage =
     isDragging && tempPosition !== null
       ? tempPosition * 100
       : progressPercentage;
 
-  // Calculate the time to display
   const displayTime =
     isDragging && tempPosition !== null ? tempPosition * duration : currentTime;
 
