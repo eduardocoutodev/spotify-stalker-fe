@@ -1,4 +1,5 @@
 import { NowPlaying } from "@/components/now-playing";
+import TopStats from "@/components/top-stats";
 
 export default function Home() {
   return (
@@ -12,7 +13,9 @@ export default function Home() {
           <div className="lg:col-span-1">
             <NowPlaying />
           </div>
-          <div className="lg:col-span-2"></div>
+          <div className="lg:col-span-2">
+            <TopStats />
+          </div>
         </div>
       </div>
     </main>
