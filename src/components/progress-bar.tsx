@@ -27,6 +27,18 @@ export function ProgressBar({
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
+  const calculatePosition = (clientX: number) => {
+    if (!progressRef.current || !onSeek || disabled) return;
+
+    const rect = progressRef.current.getBoundingClientRect();
+    const position = Math.max(
+      0,
+      Math.min(1, (clientX - rect.left) / rect.width)
+    );
+    const positionMs = Math.ceil(position * duration * 1000);
+    return positionMs;
+  };
+
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!onSeek || !progressRef.current || disabled) return;
 
@@ -36,12 +48,23 @@ export function ProgressBar({
     onSeek(positionMs);
   };
 
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!onSeek || !progressRef.current || disabled) return;
+
+    const touch = e.changedTouches[0];
+    const positionMs = calculatePosition(touch.clientX);
+    if (positionMs !== undefined) {
+      onSeek(positionMs);
+    }
+  };
+
   return (
     <div className={cn("space-y-1 w-full", className)}>
       <div
         ref={progressRef}
         className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden cursor-pointer"
         onClick={handleClick}
+        onTouchEnd={handleTouchEnd}
       >
         <div
           className="h-full bg-green-500 rounded-full transition-all duration-100"
