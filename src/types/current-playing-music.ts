@@ -30,18 +30,28 @@ const contextSchema = z.object({
   type: z.string(),
 });
 
-const currentPlayingMusicResponseSchema = z.object({
+const notPlayingSchema = z.object({
+  isPlaying: z.literal(false),
+});
+
+const playingSchema = z.object({
   context: contextSchema,
   isPlaying: z.boolean(),
   currentlyPlayingType: z.string(),
   currentItemPlaying: currentItemPlayingSchema,
 });
 
+const currentPlayingMusicResponseSchema = z.union([
+  notPlayingSchema,
+  playingSchema,
+]);
+
 // Types inferred from the schemas
 type Artist = z.infer<typeof artistSchema>;
 type Album = z.infer<typeof albumSchema>;
 type CurrentItemPlaying = z.infer<typeof currentItemPlayingSchema>;
 type Context = z.infer<typeof contextSchema>;
+type PlayingMusicResponse = z.infer<typeof playingSchema>;
 type CurrentPlayingMusicResponse = z.infer<
   typeof currentPlayingMusicResponseSchema
 >;
@@ -78,4 +88,5 @@ export {
   type Context,
   type CurrentItemPlaying,
   type CurrentPlayingMusicResponse,
+  type PlayingMusicResponse,
 };
