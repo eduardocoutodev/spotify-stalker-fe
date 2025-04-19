@@ -1,3 +1,5 @@
+import { NowPlaying } from "@/components/now-playing";
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-zinc-900">
@@ -7,7 +9,9 @@ export default function Home() {
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1"></div>
+          <div className="lg:col-span-1">
+            <NowPlaying />
+          </div>
           <div className="lg:col-span-2"></div>
         </div>
       </div>
