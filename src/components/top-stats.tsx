@@ -14,20 +14,20 @@ export default function TopStats() {
   const [timeRange, setTimeRange] = useState<TimeRange>("medium_term");
 
   return (
-    <Card className="bg-zinc-800 border-zinc-700 mt-8">
-      <div className="p-4 border-b border-zinc-700">
+    <Card className="">
+      <div className="p-4 border-b ">
         <h2 className="text-xl font-bold">
           Top {statsType === "artists" ? "Artists" : "Tracks"}
         </h2>
       </div>
 
-      <div className="p-4 border-b border-zinc-700">
+      <div className="p-4 border-b ">
         <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
           <Tabs
             defaultValue="tracks"
             onValueChange={(value) => setstatsType(value as StatsType)}
           >
-            <TabsList className="bg-zinc-700">
+            <TabsList className="">
               <TabsTrigger value="tracks">Tracks</TabsTrigger>
               <TabsTrigger value="artists" disabled>
                 Artists
@@ -39,7 +39,7 @@ export default function TopStats() {
             defaultValue="medium_term"
             onValueChange={(value) => setTimeRange(value as TimeRange)}
           >
-            <TabsList className="bg-zinc-700">
+            <TabsList>
               <TabsTrigger value="short_term" className="text-xs sm:text-sm">
                 4 Weeks
               </TabsTrigger>
@@ -110,38 +110,44 @@ function TopStatsContent({ statsType, timeRange }: TopStatsContentProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {tracks.map((track) => (
-        <div
+        <a
           key={track.id}
-          className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-700 transition-colors"
+          href={track.spotifyUrl}
+          target="_blank"
+          className="group"
         >
-          <div className="flex-shrink-0 font-bold text-zinc-500 w-6 text-right">
-            {track.userRank}
-          </div>
+          <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-100 transition-colors">
+            <div className="flex-shrink-0 font-bold text-zinc-500 w-6 text-right">
+              {track.userRank}
+            </div>
 
-          <div className="relative w-12 h-12 rounded overflow-hidden flex-shrink-0">
-            {track?.album?.imageUrl !== "" ? (
-              <Image
-                src={track.album.imageUrl}
-                alt={track.album.name}
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-zinc-700 flex items-center justify-center">
-                <Music size={24} className="text-zinc-500" />
-              </div>
-            )}
-          </div>
+            <div className="relative w-12 h-12 rounded overflow-hidden flex-shrink-0">
+              {track?.album?.imageUrl !== "" ? (
+                <Image
+                  src={track.album.imageUrl}
+                  alt={track.album.name}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Music size={24} className="text-zinc-500" />
+                </div>
+              )}
+            </div>
 
-          <div className="min-w-0 flex-1">
-            <p className="font-medium truncate">{track.name}</p>
-            {statsType === "tracks" && (
-              <p className="text-sm text-zinc-400 truncate">
-                {track.artists.map((a) => a.name).join(", ")}
+            <div className="min-w-0 flex-1">
+              <p className="font-medium truncate group-hover:underline">
+                {track.name}
               </p>
-            )}
+              {statsType === "tracks" && (
+                <p className="text-sm text-zinc-400 truncate">
+                  {track.artists.map((a) => a.name).join(", ")}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        </a>
       ))}
     </div>
   );

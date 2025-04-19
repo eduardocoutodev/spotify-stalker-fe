@@ -8,8 +8,8 @@ import Image from "next/image";
 
 export function NowPlaying() {
   return (
-    <Card className="bg-zinc-800 border-zinc-700 overflow-hidden">
-      <div className="p-4 border-b border-zinc-700">
+    <Card className="h-full overflow-hidden">
+      <div className="p-4 border-b ">
         <h2 className="text-xl font-bold">Now Playing</h2>
       </div>
 
@@ -57,16 +57,22 @@ function NowPlayingContent() {
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-zinc-700 flex items-center justify-center">
-              <Music size={48} className="text-zinc-500" />
+            <div className="w-full h-full flex items-center justify-center">
+              <Music size={48} />
             </div>
           )}
         </div>
 
         <div className="text-center mb-6">
-          <h3 className="text-xl font-bold mb-1 line-clamp-1">
-            {data.currentItemPlaying.name}
-          </h3>
+          <a
+            target="_blank"
+            href={data.currentItemPlaying.spotifyHref}
+            className="group"
+          >
+            <h3 className="text-xl font-bold mb-1 line-clamp-1 group-hover:underline">
+              {data.currentItemPlaying.name}
+            </h3>
+          </a>
           <p className="text-zinc-400 mb-1 line-clamp-1">
             {data.currentItemPlaying.artists.map((a) => a.name).join(" & ")}
           </p>
