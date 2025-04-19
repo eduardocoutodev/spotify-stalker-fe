@@ -11,6 +11,14 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "Spotify Stalker",
   description: "View and control Eduardo Couto spotify habits",
+  authors: [
+    {
+      name: "Eduardo Couto",
+      url: "https://eduardocouto.dev",
+    },
+  ],
+  applicationName: "Eduardo Couto - Spotify Stalker",
+  creator: "Eduardo Couto",
 };
 
 export default function RootLayout({
