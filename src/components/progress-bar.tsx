@@ -6,6 +6,7 @@ import React from "react";
 interface ProgressBarProps {
   currentTime: number;
   duration: number;
+  disabled: boolean;
   className?: string;
   onSeek?: (position: number) => void;
 }
@@ -13,6 +14,7 @@ interface ProgressBarProps {
 export function ProgressBar({
   currentTime,
   duration,
+  disabled,
   className,
   onSeek,
 }: ProgressBarProps) {
@@ -26,11 +28,12 @@ export function ProgressBar({
   };
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!onSeek || !progressRef.current) return;
+    if (!onSeek || !progressRef.current || disabled) return;
 
     const rect = progressRef.current.getBoundingClientRect();
     const position = (e.clientX - rect.left) / rect.width;
-    onSeek(position * duration);
+    const positionMs = Math.ceil(position * duration * 1000);
+    onSeek(positionMs);
   };
 
   return (

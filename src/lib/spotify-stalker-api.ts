@@ -4,6 +4,10 @@ import {
 } from "@/types/current-playing-music";
 import { TimeRange } from "@/types/shared";
 import { TracksResponse, validateTracksResponse } from "@/types/top-tracks";
+import {
+  UserPlayerSeekNewPosition,
+  userPlayerSeekNewPositionResponseSchema,
+} from "@/types/user-player";
 import { z } from "zod";
 import { ENV } from "./environment";
 
@@ -74,6 +78,34 @@ export async function fetchTopTracks({
 
     const data = await response.json();
     return validateTracksResponse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error("Validation error:", error.errors);
+    }
+    throw error;
+  }
+}
+
+export async function mutateUserPlayerMusicPosition(
+  userPlayerSeekNewPositionBody: UserPlayerSeekNewPosition
+) {
+  const SPOTIFY_STALKER_API = ENV.NEXT_PUBLIC_SPOTIFY_STALKER_API;
+
+  try {
+    const response = await fetch(`${SPOTIFY_STALKER_API}/user/player/seek`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+      },
+      body: JSON.stringify(userPlayerSeekNewPositionBody),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return userPlayerSeekNewPositionResponseSchema.parse(data);
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error("Validation error:", error.errors);

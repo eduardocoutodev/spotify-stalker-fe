@@ -1,7 +1,10 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { fetchCurrentPlayingMusic } from "@/lib/spotify-stalker-api";
+import {
+  fetchCurrentPlayingMusic,
+  mutateUserPlayerMusicPosition,
+} from "@/lib/spotify-stalker-api";
 import {
   CurrentPlayingMusicResponse,
   PlayingMusicResponse,
@@ -9,6 +12,7 @@ import {
 import {
   QueryObserverResult,
   RefetchOptions,
+  useMutation,
   useQuery,
 } from "@tanstack/react-query";
 import { Music } from "lucide-react";
@@ -120,6 +124,11 @@ function NowPlayingProgressBar({ track, refetch }: NowPlayingProgressBarProps) {
   );
   const duration = track.currentItemPlaying.durationMs / 1000;
 
+  const { mutate, isPending, isError } = useMutation({
+    mutationKey: [track.currentItemPlaying.id, currentTime],
+    mutationFn: mutateUserPlayerMusicPosition,
+  });
+
   const { isPlaying } = track;
 
   useEffect(() => {
@@ -146,11 +155,18 @@ function NowPlayingProgressBar({ track, refetch }: NowPlayingProgressBarProps) {
     };
   }, [track, isPlaying, duration, refetch]);
 
+  const disabled = isError || isPending;
+
   return (
     <ProgressBar
+      className="mt-4 px-2"
       currentTime={currentTime}
       duration={duration}
-      className="mt-4 px-2"
+      disabled={disabled}
+      onSeek={(newPositionMs: number) => {
+        mutate({ newPositionMs });
+        setCurrentTime(newPositionMs / 1000);
+      }}
     />
   );
 }
