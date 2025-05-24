@@ -11,7 +11,7 @@ import {
 import { z } from "zod";
 import { ENV } from "./environment";
 
-export async function fetchCurrentPlayingMusic(): Promise<CurrentPlayingMusicResponse> {
+export async function fetchCurrentPlayingMusic(): Promise<CurrentPlayingMusicResponse | null> {
   const SPOTIFY_STALKER_API = ENV.NEXT_PUBLIC_SPOTIFY_STALKER_API;
 
   try {
@@ -27,6 +27,12 @@ export async function fetchCurrentPlayingMusic(): Promise<CurrentPlayingMusicRes
 
     if (!apiResponse.ok) {
       throw new Error(`HTTP error! Status: ${apiResponse.status}`);
+    }
+
+    if (apiResponse.status == 204) {
+      // Not playing any music
+
+      return null;
     }
 
     const body = await apiResponse.json();
@@ -106,6 +112,108 @@ export async function mutateUserPlayerMusicPosition(
 
     const data = await response.json();
     return userPlayerSeekNewPositionResponseSchema.parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error("Validation error:", error.errors);
+    }
+    throw error;
+  }
+}
+
+export async function mutatePausePlayer() {
+  const SPOTIFY_STALKER_API = ENV.NEXT_PUBLIC_SPOTIFY_STALKER_API;
+
+  try {
+    const response = await fetch(`${SPOTIFY_STALKER_API}/user/player/pause`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error("Validation error:", error.errors);
+    }
+    throw error;
+  }
+}
+
+export async function mutateResumePlayer() {
+  const SPOTIFY_STALKER_API = ENV.NEXT_PUBLIC_SPOTIFY_STALKER_API;
+
+  try {
+    const response = await fetch(`${SPOTIFY_STALKER_API}/user/player/resume`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error("Validation error:", error.errors);
+    }
+    throw error;
+  }
+}
+
+export async function mutateSkipPreviousMusicPlayer() {
+  const SPOTIFY_STALKER_API = ENV.NEXT_PUBLIC_SPOTIFY_STALKER_API;
+
+  try {
+    const response = await fetch(
+      `${SPOTIFY_STALKER_API}/user/player/skip/previous`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    await response.json();
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error("Validation error:", error.errors);
+    }
+    throw error;
+  }
+}
+
+export async function mutateSkipNextMusicPlayer() {
+  const SPOTIFY_STALKER_API = ENV.NEXT_PUBLIC_SPOTIFY_STALKER_API;
+
+  try {
+    const response = await fetch(
+      `${SPOTIFY_STALKER_API}/user/player/skip/next`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    await response.json();
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error("Validation error:", error.errors);

@@ -30,10 +30,6 @@ const contextSchema = z.object({
   type: z.string(),
 });
 
-const notPlayingSchema = z.object({
-  isPlaying: z.literal(false),
-});
-
 const playingSchema = z.object({
   context: contextSchema,
   isPlaying: z.boolean(),
@@ -41,25 +37,18 @@ const playingSchema = z.object({
   currentItemPlaying: currentItemPlayingSchema,
 });
 
-const currentPlayingMusicResponseSchema = z.union([
-  notPlayingSchema,
-  playingSchema,
-]);
-
 // Types inferred from the schemas
 type Artist = z.infer<typeof artistSchema>;
 type Album = z.infer<typeof albumSchema>;
 type CurrentItemPlaying = z.infer<typeof currentItemPlayingSchema>;
 type Context = z.infer<typeof contextSchema>;
 type PlayingMusicResponse = z.infer<typeof playingSchema>;
-type CurrentPlayingMusicResponse = z.infer<
-  typeof currentPlayingMusicResponseSchema
->;
+type CurrentPlayingMusicResponse = z.infer<typeof playingSchema>;
 
 function validateCurrentPlayingMusic(
   data: unknown
 ): CurrentPlayingMusicResponse {
-  return currentPlayingMusicResponseSchema.parse(data);
+  return playingSchema.parse(data);
 }
 
 function safeValidateCurrentPlayingMusic(data: unknown): {
@@ -67,7 +56,7 @@ function safeValidateCurrentPlayingMusic(data: unknown): {
   data?: CurrentPlayingMusicResponse;
   error?: z.ZodError;
 } {
-  const result = currentPlayingMusicResponseSchema.safeParse(data);
+  const result = playingSchema.safeParse(data);
   if (result.success) {
     return { success: true, data: result.data };
   } else {
@@ -80,7 +69,6 @@ export {
   artistSchema,
   contextSchema,
   currentItemPlayingSchema,
-  currentPlayingMusicResponseSchema,
   safeValidateCurrentPlayingMusic,
   validateCurrentPlayingMusic,
   type Album,

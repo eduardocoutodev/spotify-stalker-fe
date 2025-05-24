@@ -22,6 +22,7 @@ export function NowPlaying() {
 }
 
 function NowPlayingContent() {
+  // TODO Extract this to custom hook + use context
   const { isPending, isError, data, error, refetch } = useQuery({
     queryKey: ["now-playing"],
     queryFn: fetchCurrentPlayingMusic,
@@ -46,7 +47,7 @@ function NowPlayingContent() {
     );
   }
 
-  if (!data.isPlaying) {
+  if (!data) {
     return (
       <div className="flex justify-center items-center h-64">
         Eduardo is not listening to any music right now.
